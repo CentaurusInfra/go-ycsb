@@ -58,7 +58,7 @@ func (r *rkv) Scan(ctx context.Context, table string, startKey string, count int
 
 func (r *rkv) Update(ctx context.Context, table string, key string, values map[string][]byte) error {
 	client := &http.Client{}
-	fmt.Printf("the key is %s and the value is %v\n ", key, values)
+	//fmt.Printf("the key is %s and the value is %v\n ", key, values)
 	newV := make(map[string][]byte)
 	newV["key"] = []byte(key)
 	newV["value"] = values["field0"]
@@ -98,7 +98,7 @@ func (r *rkv) Update(ctx context.Context, table string, key string, values map[s
 
 func (r *rkv) Insert(ctx context.Context, table string, key string, values map[string][]byte) error {
 	client := &http.Client{}
-	fmt.Printf("the key is %s and the value is %v\n ", key, values)
+	//fmt.Printf("the key is %s and the value is %v\n ", key, values)
 	newV := make(map[string][]byte)
 	newV["key"] = []byte(key)
 	newV["value"] = values["field0"]
@@ -128,11 +128,12 @@ func (r *rkv) Insert(ctx context.Context, table string, key string, values map[s
 		fmt.Println(err)
 		return err
 	}
+	_=respBody
 
 	// Display Results
-	fmt.Println("response Status : ", resp.Status)
-	fmt.Println("response Headers : ", resp.Header)
-	fmt.Println("response Body : ", string(respBody))
+	//fmt.Println("response Status : ", resp.Status)
+	//fmt.Println("response Headers : ", resp.Header)
+	//fmt.Println("response Body : ", string(respBody))
 	return nil
 }
 
@@ -160,11 +161,12 @@ func (r *rkv) Delete(ctx context.Context, table string, key string) error {
 		fmt.Println(err)
 		return err
 	}
+	_=respBody
 
 	// Display Results
-	fmt.Println("response Status : ", resp.Status)
-	fmt.Println("response Headers : ", resp.Header)
-	fmt.Println("response Body : ", string(respBody))
+	//fmt.Println("response Status : ", resp.Status)
+	//fmt.Println("response Headers : ", resp.Header)
+	//fmt.Println("response Body : ", string(respBody))
 	return nil
 }
 
