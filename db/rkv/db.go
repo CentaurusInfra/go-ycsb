@@ -36,6 +36,7 @@ func (r *rkv) Read(ctx context.Context, table string, key string, fields []strin
 	data := make(map[string][]byte, len(fields))
 	resp, err := http.Get(fmt.Sprintf("http://%s/kv?key=%s", rkvAddrDefault, key))
 	if err != nil {
+		fmt.Printf("key is %s and error is %v\n", key, err)
 		return nil, err
 	}
 	defer resp.Body.Close()
@@ -63,6 +64,7 @@ func (r *rkv) Update(ctx context.Context, table string, key string, values map[s
 	// Create request
 	req, err := http.NewRequest("POST", fmt.Sprintf("http://%s/kv", rkvAddrDefault), bytes.NewBuffer(requestBody))
 	if err != nil {
+		fmt.Printf("key is %s, value is %s, and error is %v\n", key, fmt.Sprint(values), err)
 		return err
 	}
 
@@ -102,6 +104,7 @@ func (r *rkv) Insert(ctx context.Context, table string, key string, values map[s
 	// Create request
 	req, err := http.NewRequest("POST", fmt.Sprintf("http://%s/kv", rkvAddrDefault), bytes.NewBuffer(requestBody))
 	if err != nil {
+		fmt.Printf("key is %s, value is %s, and error is %v\n", key, fmt.Sprint(values), err)
 		return err
 	}
 
@@ -137,6 +140,7 @@ func (r *rkv) Delete(ctx context.Context, table string, key string) error {
 	// Create request
 	req, err := http.NewRequest("DELETE", fmt.Sprintf("http://%s/kv?key=%s", rkvAddrDefault, key), nil)
 	if err != nil {
+		fmt.Printf("key is %s, and error is %v\n", key, err)
 		return err
 	}
 
