@@ -160,7 +160,7 @@ func (r *rkv) Delete(ctx context.Context, table string, key string) error {
 	// fmt.Println("response Status : ", resp.Status)
 	// fmt.Println("response Headers : ", resp.Header)
 	// fmt.Println("response Body : ", string(respBody))
-r
+
 	return nil
 }
 
