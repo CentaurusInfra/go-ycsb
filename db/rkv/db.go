@@ -5,8 +5,8 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 
 	"github.com/magiconair/properties"
@@ -34,21 +34,15 @@ func (r *rkv) CleanupThread(_ context.Context) {
 
 func (r *rkv) Read(ctx context.Context, table string, key string, fields []string) (map[string][]byte, error) {
 	data := make(map[string][]byte, len(fields))
-
 	resp, err := http.Get(fmt.Sprintf("http://%s/kv?key=%s", rkvAddrDefault, key))
 	if err != nil {
 		return nil, err
 	}
 	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
+	if resp.StatusCode != http.StatusAccepted {
+		return nil, errors.New("unexpected status code")
 	}
 
-	err = json.Unmarshal(body, &data)
-	if err != nil {
-		return nil, err
-	}
 	return data, err
 }
 
@@ -58,10 +52,9 @@ func (r *rkv) Scan(ctx context.Context, table string, startKey string, count int
 
 func (r *rkv) Update(ctx context.Context, table string, key string, values map[string][]byte) error {
 	client := &http.Client{}
-	fmt.Printf("the key is %s and the value is %v\n ", key, values)
-	newV := make(map[string][]byte)
-	newV["key"] = []byte(key)
-	newV["value"] = values["field0"]
+	newV := make(map[string]string)
+	newV["key"] = key
+	newV["value"] = fmt.Sprint(values)
 	requestBody, err := json.Marshal(newV)
 	if err != nil {
 		return err
@@ -70,18 +63,18 @@ func (r *rkv) Update(ctx context.Context, table string, key string, values map[s
 	// Create request
 	req, err := http.NewRequest("POST", fmt.Sprintf("http://%s/kv", rkvAddrDefault), bytes.NewBuffer(requestBody))
 	if err != nil {
-		fmt.Println(err)
 		return err
 	}
 
 	// Fetch Request
 	resp, err := client.Do(req)
 	if err != nil {
-		fmt.Println(err)
 		return err
 	}
 	defer resp.Body.Close()
-
+	if resp.StatusCode != http.StatusCreated {
+		return errors.New("unexpected status code")
+	}
 	// Read Response Body
 	// respBody, err := ioutil.ReadAll(resp.Body)
 	// if err != nil {
@@ -98,10 +91,9 @@ func (r *rkv) Update(ctx context.Context, table string, key string, values map[s
 
 func (r *rkv) Insert(ctx context.Context, table string, key string, values map[string][]byte) error {
 	client := &http.Client{}
-	fmt.Printf("the key is %s and the value is %v\n ", key, values)
-	newV := make(map[string][]byte)
-	newV["key"] = []byte(key)
-	newV["value"] = values["field0"]
+	newV := make(map[string]string)
+	newV["key"] = key
+	newV["value"] = fmt.Sprint(values)
 	requestBody, err := json.Marshal(newV)
 	if err != nil {
 		return err
@@ -110,29 +102,30 @@ func (r *rkv) Insert(ctx context.Context, table string, key string, values map[s
 	// Create request
 	req, err := http.NewRequest("POST", fmt.Sprintf("http://%s/kv", rkvAddrDefault), bytes.NewBuffer(requestBody))
 	if err != nil {
-		fmt.Println(err)
 		return err
 	}
 
 	// Fetch Request
 	resp, err := client.Do(req)
 	if err != nil {
-		fmt.Println(err)
 		return err
 	}
 	defer resp.Body.Close()
 
-	// // Read Response Body
-	respBody, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		fmt.Println(err)
-		return err
+	if resp.StatusCode != http.StatusCreated {
+		return errors.New("unexpected status code")
 	}
+	// // Read Response Body
+	// respBody, err := ioutil.ReadAll(resp.Body)
+	// if err != nil {
+	// 	fmt.Println(err)
+	// 	return err
+	// }
 
-	// Display Results
-	fmt.Println("response Status : ", resp.Status)
-	fmt.Println("response Headers : ", resp.Header)
-	fmt.Println("response Body : ", string(respBody))
+	// // Display Results
+	// fmt.Println("response Status : ", resp.Status)
+	// fmt.Println("response Headers : ", resp.Header)
+	// fmt.Println("response Body : ", string(respBody))
 	return nil
 }
 
@@ -142,29 +135,28 @@ func (r *rkv) Delete(ctx context.Context, table string, key string) error {
 	// Create request
 	req, err := http.NewRequest("DELETE", fmt.Sprintf("http://%s/kv?key=%s", rkvAddrDefault, key), nil)
 	if err != nil {
-		fmt.Println(err)
 		return err
 	}
 
 	// Fetch Request
 	resp, err := client.Do(req)
 	if err != nil {
-		fmt.Println(err)
 		return err
 	}
 	defer resp.Body.Close()
-
-	// Read Response Body
-	respBody, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		fmt.Println(err)
-		return err
+	if resp.StatusCode != http.StatusAccepted {
+		return errors.New("unexpected status code")
 	}
+	// Read Response Body
+	// respBody, err := ioutil.ReadAll(resp.Body)
+	// if err != nil {
+	// 	return err
+	// }
 
-	// Display Results
-	fmt.Println("response Status : ", resp.Status)
-	fmt.Println("response Headers : ", resp.Header)
-	fmt.Println("response Body : ", string(respBody))
+	// // Display Results
+	// fmt.Println("response Status : ", resp.Status)
+	// fmt.Println("response Headers : ", resp.Header)
+	// fmt.Println("response Body : ", string(respBody))
 	return nil
 }
 
