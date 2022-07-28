@@ -115,6 +115,7 @@ func (r *rkv) Insert(ctx context.Context, table string, key string, values map[s
 	if resp.StatusCode != http.StatusCreated {
 		return errors.New("unexpected status code")
 	}
+
 	// // Read Response Body
 	// respBody, err := ioutil.ReadAll(resp.Body)
 	// if err != nil {
@@ -126,6 +127,7 @@ func (r *rkv) Insert(ctx context.Context, table string, key string, values map[s
 	// fmt.Println("response Status : ", resp.Status)
 	// fmt.Println("response Headers : ", resp.Header)
 	// fmt.Println("response Body : ", string(respBody))
+
 	return nil
 }
 
@@ -147,6 +149,7 @@ func (r *rkv) Delete(ctx context.Context, table string, key string) error {
 	if resp.StatusCode != http.StatusAccepted {
 		return errors.New("unexpected status code")
 	}
+
 	// Read Response Body
 	// respBody, err := ioutil.ReadAll(resp.Body)
 	// if err != nil {
@@ -157,6 +160,7 @@ func (r *rkv) Delete(ctx context.Context, table string, key string) error {
 	// fmt.Println("response Status : ", resp.Status)
 	// fmt.Println("response Headers : ", resp.Header)
 	// fmt.Println("response Body : ", string(respBody))
+r
 	return nil
 }
 
@@ -170,7 +174,9 @@ func (r rkvCreator) Create(p *properties.Properties) (ycsb.DB, error) {
 }
 
 const (
-	rkvAddrDefault = "localhost:8090"
+	// remote rkv ip addr is required
+	//rkvAddrDefault = "localhost:8090"
+	rkvAddrDefault = "rkv:8090"
 )
 
 func init() {
