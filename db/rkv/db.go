@@ -43,7 +43,7 @@ func (r *rkv) Read(ctx context.Context, table string, key string, fields []strin
 
 	// Get Request
 	var err error
-	var resp *http.Response
+	resp, err := http.Get(fmt.Sprintf("http://%s/kv?key=%s", rkvAddrDefault, key))
 	for i := 0; err != nil && i < RetryCount; i++ {
 		time.Sleep(RetryInterval << i)
 		resp, err = http.Get(fmt.Sprintf("http://%s/kv?key=%s", rkvAddrDefault, key))
@@ -84,7 +84,7 @@ func (r *rkv) Update(ctx context.Context, table string, key string, values map[s
 	}
 
 	// Update Request
-	var resp *http.Response
+	resp, err := client.Do(req)
 	for i := 0; err != nil && i < RetryCount; i++ {
 		time.Sleep(RetryInterval << i)
 		resp, err = client.Do(req)
@@ -130,7 +130,7 @@ func (r *rkv) Insert(ctx context.Context, table string, key string, values map[s
 	}
 
 	// Insert Request
-	var resp *http.Response
+	resp, err := client.Do(req)
 	for i := 0; err != nil && i < RetryCount; i++ {
 		time.Sleep(RetryInterval << i)
 		resp, err = client.Do(req)
@@ -172,7 +172,7 @@ func (r *rkv) Delete(ctx context.Context, table string, key string) error {
 	}
 
 	// Delete Request
-	var resp *http.Response
+	resp, err := client.Do(req)
 	for i := 0; err != nil && i < RetryCount; i++ {
 		time.Sleep(RetryInterval << i)
 		resp, err = client.Do(req)
