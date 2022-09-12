@@ -212,8 +212,8 @@ func (r rkvCreator) Create(p *properties.Properties) (ycsb.DB, error) {
 
 const (
 	// remote rkv ip addr is required
-	rkvAddrDefault = "localhost:8090"
-	//rkvAddrDefault = "rkv:8090"
+	//rkvAddrDefault = "localhost:8090"
+	rkvAddrDefault = "rkv:8090"
 )
 
 func init() {
