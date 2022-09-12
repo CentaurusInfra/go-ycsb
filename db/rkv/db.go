@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	RetryCount    int           = 3
+	RetryCount    int           = 5
 	RetryInterval time.Duration = 10 * time.Millisecond
 )
 
